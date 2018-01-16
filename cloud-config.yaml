@@ -1,0 +1,14 @@
+#cloud-config
+users:
+  - name: akim
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAkEDcfyxPum1nckdZm3I5K0SZXwNNluzg1EuStJ54OX78Q2+F7KmUgILEv8LxYS6B6QEGdec7EgWhNnJA6BQkuVB2ooG9vb+Y2lRpVggVvE9xVjk1uBr8uPUypq5OTAo1rsM+6XqAc7r/662x2MclcXClrayD0Mi0SvXKyckcCr412qx0XvXfNFk1m2slz8QYMs89DGKSvUW8uRx2ZZVN92ZO4mFzvKN/mQwrD/N3ziUyeQRGEB81+wBeV33D6x1rq8+anl4k8udivfFeQkurIMn8cJfLMsnUX2fEvP1uR7ZEsulKe4xgM3zyCPtQM2EGcQUCAEKlsUQWJh3/MpwfeQ== rsa-key-20180102
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    runcmd:
+      - groupadd sshusers
+      - usermod -aG sshusers akim
+      - sed -i 's/#Port 22/Port @@{sshport}@@/g' /etc/ssh/sshd_config
+      - sed -i 's/#PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
+      - sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+      - echo Allowgroups sshusers >> /etc/ssh/sshd_config
+      - restart ssh
