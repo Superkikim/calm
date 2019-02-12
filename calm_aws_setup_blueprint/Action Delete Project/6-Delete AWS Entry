@@ -1,0 +1,69 @@
+#!/bin/env python
+
+# Name:         Delete AWS Calm Entry
+# Type:         Execute
+# Script Type:  Shell
+# Description:  Delete the related AWS entry in Calm Settings
+
+# Script:
+
+import requests, json, urllib3, shelve, sys
+from requests.auth import HTTPBasicAuth
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+try:
+    db = shelve.open("@@{project_name}@@.db")
+except Exception as error:
+    print('Unable to open flat file: %s' % (error))
+    sys.exit(1)
+
+# Get account UUID
+try:
+    url = "https://@@{pc_ip}@@:9440/api/nutanix/v3/accounts/list"
+    data = {"filter" : "name=="+db["username"]}
+
+    myResponse = requests.post(url,json=data,auth=HTTPBasicAuth(db["pc_user"],db["pc_password"]), verify=False)
+
+    if(myResponse.ok):
+
+        jData = json.loads(myResponse.content)
+        uuid = (jData["entities"][0]["metadata"]["uuid"])
+
+    else:
+        myResponse.raise_for_status()
+
+except Exception as error:
+    print('Error while getting UUID: %s' % (error))
+    sys.exit(1)
+
+
+# Delete account
+
+try:
+
+    url = "https://@@{pc_ip}@@:9440/api/nutanix/v3/accounts/"+uuid
+
+    myResponse = requests.delete(url,json=data,auth=HTTPBasicAuth(db["pc_user"],db["pc_password"]), verify=False)
+
+    if(myResponse.ok):
+
+        jData = json.loads(myResponse.content)
+
+        for key in jData:
+            formatted_json = json.dumps(jData[key], indent=4)
+            print str(key) + " : " + formatted_json
+    else:
+        myResponse.raise_for_status()
+
+except Exception as error:
+    print('Error while deleting account: %s' % (error))
+    sys.exit(1)
+
+try:
+    db.sync()
+    db.close()
+except Exception as error:
+    print('Failed to close flat file: %s' % (error))
+    sys.exit(1)
+
+sys.exit(0)

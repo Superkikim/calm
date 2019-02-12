@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Type:        Execute
+# Script Type: Shell
+
+# Script:
+
+set -ex
+
+echo Create sudo file for new user
+
+# We add command alias that we will block preventing users to run interactive
+# shells or to switch to root. This garantees tracking of user activity
+# Only the admin user will be able to run any command without password only from
+# localhost and except commands in NSHELLS and NSU alliases
+
+sudo touch /etc/sudoers.d/@@{admin_cred.username}@@
+echo "Cmnd_Alias NSHELLS = /bin/sh, /bin/bash, /sbin/nologin, /bin/tcsh, /bin/csh, /bin/zsh, /bin/ksh, /usr/sbin/visudo" | sudo tee -a /etc/sudoers.d/@@{admin_cred.username}@@
+echo "Cmnd_Alias NSU = /bin/su" | sudo tee -a /etc/sudoers.d/@@{admin_cred.username}@@
+echo "@@{admin_cred.username}@@ `hostname` = NOPASSWD:ALL, !NSHELLS, !NSU"  | sudo tee -a /etc/sudoers.d/@@{admin_cred.username}@@
+
+echo Checking sudo file
+sudo cat /etc/sudoers.d/@@{admin_cred.username}@@

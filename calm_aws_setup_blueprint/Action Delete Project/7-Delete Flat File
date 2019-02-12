@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -ex
+
+rm "@@{project_name}@@.db"

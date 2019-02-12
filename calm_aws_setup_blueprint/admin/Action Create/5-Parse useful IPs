@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Type:        Set Variable
+# Script Type: Shell
+
+# Script:
+
+set -ex
+
+# Get the public IP address used to access the internet
+currentip=`wget --no-check-certificate -q checkip.dyndns.org -O index.html && cat index.html|cut -d ' ' -f 6 | cut -d '<' -f 1`
+
+# Get Prism Central IP address
+pcip="${SSH_CLIENT%% *}"
+
+echo "public_ip = $currentip"
+echo "pc_ip = $pcip"

@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+# Name: 		Delete IAM Role
+# Type:         Execute
+# Script type:	Shell
+
+# Script:
+import boto, sys, shelve, os
+
+def treat(file):
+
+    accessID = db["key"]
+    accessKEY = db["secret"]
+
+    try:
+    	conn = boto.connect_iam(accessID,accessKEY)
+    except Exception as error:
+    	print('Connection failed: %s' % (error))
+    	pass
+
+    try:
+    	conn.remove_role_from_instance_profile(db["rolename"], db["rolename"])
+    	conn.delete_instance_profile(db["rolename"])
+    	conn.delete_role(db["rolename"])
+    except Exception as error:
+    	print('Error in role deletion: %s' % (error))
+    	pass
+
+for file in os.listdir("."):
+    try:
+        if file.endswith(".db"):
+            db = shelve.open(file)
+            if len(db) == 0:
+                os.remove(file)
+            else:
+                treat(file)
+    except Exception as error:
+        print('Error while getting list of projects: %s' % (error))
+        pass
+
+sys.exit(0)

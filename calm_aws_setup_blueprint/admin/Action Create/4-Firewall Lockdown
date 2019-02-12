@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# Type:        Execute
+# Script Type: Shell
+
+# Script:
+
+set -ex
+
+echo  Firewall lockdown
+mkdir scripts
+cat > ~/scripts/iptablescfg.sh <<EOL
+
+#Adding 5 seconds pause to allow closing SSH session before port is changed
+sleep 5
+
+# Blocking all traffic
+sudo iptables -F
+sudo iptables -P INPUT DROP
+sudo iptables -P OUTPUT DROP
+sudo iptables -P FORWARD DROP
+
+# Open port 22 for incoming SSH connections
+sudo iptables -A INPUT -p tcp -d @@{address}@@ --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A OUTPUT -p tcp -s @@{address}@@ --sport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+# Allow outgoing SSH from anyone
+sudo iptables -A OUTPUT -p tcp -s @@{address}@@ --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -p tcp -d @@{address}@@ --sport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+# Allow outgoing NTP connections
+
+sudo iptables -A OUTPUT -p udp -s @@{address}@@ --dport 123 -d 0/0 --sport 123 -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -p udp -s 0/0 --sport 123 -d @@{address}@@ --dport 123 -m state --state ESTABLISHED -j ACCEPT
+
+# Allow DNS traffic
+for ns in `cat /etc/resolv.conf | grep nameserver | awk '{print $2}'`
+dos
+	sudo iptables -A OUTPUT -p udp -s @@{address}@@ --sport 1024:65535 --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+	sudo iptables -A INPUT -p udp --sport 53 -d @@{address}@@ --dport 1024:65535 -m state --state ESTABLISHED -j ACCEPT
+	sudo iptables -A OUTPUT -p tcp -s @@{address}@@ --sport 1024:65535 --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+	sudo iptables -A INPUT -p tcp --sport 53 -d @@{address}@@ --dport 1024:65535 -m state --state ESTABLISHED -j ACCEPT
+done
+
+# Allow outgoing http
+
+sudo iptables -A OUTPUT -p tcp -s @@{address}@@ --sport 1024:65535 -d 0/0 --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -p tcp -s 0/0 --sport 80 -d @@{address}@@ --dport 1024:65535 -m state --state ESTABLISHED -j ACCEPT
+
+# Allow outgoing https
+
+sudo iptables -A OUTPUT -p tcp -s @@{address}@@ --sport 1024:65535 -d 0/0 --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -p tcp -s 0/0 --sport 443 -d @@{address}@@ --dport 1024:65535 -m state --state ESTABLISHED -j ACCEPT
+
+# Display iptables configuration for troubleshooting
+sudo iptables -L
+EOL
+
+chmod +x /home/@@{ssh_user}@@/scripts/iptablescfg.sh
+/home/@@{ssh_user}@@/scripts/iptablescfg.sh &

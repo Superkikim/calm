@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -ex
+
+sudo yum update -y
+sudo yum install nano htop -y
+
+sudo yum install epel-release python -y
+sudo yum install python-pip -y
+sudo yum install wget -y
+
+sudo pip install --upgrade pip
+sudo pip install boto netaddr

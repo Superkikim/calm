@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+# Create VPC
+
+# Name:         Delete VPC and dependencies
+# Type:         Execute
+# Script Type:  Shell
+# Description:	Detach the Internet Gateway, delete the subnet, route table, security group, vpc and internet gateway
+
+# Script:
+
+import boto, boto.vpc, sys, shelve, os
+
+def treat(file):
+
+    accessID = db["key"]
+    accessKEY = db["secret"]
+
+    try:
+    	conn = boto.vpc.connect_to_region(db["region"], aws_access_key_id=accessID, aws_secret_access_key=accessKEY)
+    except Exception as error:
+    	print('Connection failed: %s' % (error))
+    	pass
+
+    try:
+        conn.detach_internet_gateway(db["gateway_id"],db["vpc_id"])
+    except Exception as error:
+    	print('Failed to detach internet gateway: %s' % (error))
+    	pass
+    try:
+        conn.delete_subnet(db["subnet_id"])
+    except Exception as error:
+    	print('Failed to delete subnet: %s' % (error))
+    	pass
+    try:
+        conn.delete_route_table(db["route_table_id"])
+    except Exception as error:
+    	print('Failed to delete route table: %s' % (error))
+    	pass
+    try:
+        conn.delete_security_group(None,db["sg_id"])
+    except Exception as error:
+    	print('Failed to delete security group: %s' % (error))
+    	pass
+    try:
+        conn.delete_vpc(db["vpc_id"])
+    except Exception as error:
+    	print('Failed to delete vpc: %s' % (error))
+    	pass
+    try:
+        conn.delete_internet_gateway(db["gateway_id"])
+    except Exception as error:
+    	print('Failed to delete internet gateway: %s' % (error))
+    	pass
+
+for file in os.listdir("."):
+    try:
+        if file.endswith(".db"):
+            db = shelve.open(file)
+            if len(db) == 0:
+                os.remove(file)
+            else:
+                treat(file)
+    except Exception as error:
+        print('Error while getting list of projects: %s' % (error))
+        pass
+
+sys.exit(0)

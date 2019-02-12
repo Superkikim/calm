@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+# Type:         Execute
+# Script Type:  Shell
+# Description:  Delete related keypair
+
+# Script:
+
+import boto.ec2, sys, os, shelve
+
+def treat(file):
+
+    accessID = db["key"]
+    accessKEY = db["secret"]
+    keypair_name=db["project"]+'_keypair'
+
+    try:
+        conn = boto.ec2.connect_to_region(db["region"], aws_access_key_id=accessID, aws_secret_access_key=accessKEY)
+    except Exception as error:
+        print('Connection failed: %s' % (error))
+        pass
+
+    try:
+        # delete key pair in AWS
+        conn.delete_key_pair(keypair_name)
+    except Exception as error:
+        print('Failed to delete key pair in AWS: %s' % error)
+        pass
+
+    try:
+        # delete key pair file
+        os.remove(keypair_name+'.pem')
+    except Exception as error:
+        print('Failed to delete key pair file: %s' % error)
+        pass
+
+for file in os.listdir("."):
+    try:
+        if file.endswith(".db"):
+            db = shelve.open(file)
+            if len(db) == 0:
+                os.remove(file)
+            else:
+                treat(file)
+    except Exception as error:
+        print('Error while getting list of projects: %s' % (error))
+        pass
+
+sys.exit(0)

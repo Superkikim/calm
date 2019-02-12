@@ -1,0 +1,71 @@
+#!/bin/env python
+
+# Name:         Create AWS Calm Entry
+# Type:         Execute
+# Script Type:  Shell
+# Description:  Create an AWS entry in Calm Settings with newly created account
+
+# Script:
+
+import requests, json, urllib3, shelve, sys
+from requests.auth import HTTPBasicAuth
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+try:
+    db = shelve.open("@@{project_name}@@.db")
+except Exception as error:
+    print('Unable to open flat file: %s' % (error))
+    sys.exit(1)
+
+url = "https://@@{pc_ip}@@:9440/api/nutanix/v3/accounts"
+
+data = {
+   "api_version": "3.0",
+   "metadata": {
+      "kind": "account"
+   },
+   "spec": {
+      "name": db["username"],
+      "description": "AWS Account using IAM user "+db["username"],
+      "resources": {
+         "type": "aws",
+         "data": {
+            "regions": [
+               {
+                  "name": "@@{region}@@"
+               }
+            ],
+            "access_key_id": db["proj_access_key_id"],
+            "secret_access_key": {
+               "value": db["proj_secret_access_key"],
+               "attrs": {
+                  "is_secret_modified": "true"
+               }
+            }
+         }
+      }
+   }
+}
+
+myResponse = requests.post(url,json=data,auth=HTTPBasicAuth(db["pc_user"],db["pc_password"]), verify=False)
+
+if(myResponse.ok):
+
+    jData = json.loads(myResponse.content)
+
+    print("The response contains {0} properties".format(len(jData)))
+    print("\n")
+    for key in jData:
+        formatted_json = json.dumps(jData[key], indent=4)
+        print str(key) + " : " + formatted_json
+else:
+    myResponse.raise_for_status()
+
+try:
+    db.sync()
+    db.close()
+except Exception as error:
+    print('Failed to close flat file: %s' % (error))
+    sys.exit(1)
+
+sys.exit(0)

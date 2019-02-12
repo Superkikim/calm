@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+
+# Name:         Create Subnet
+# Type:         Execute
+# Script Type:  Shell
+# New keys:     subnet_id
+#               subnet_az
+#               subnet_table_id
+
+# Script:
+
+import boto.vpc, sys, shelve
+
+try:
+    db = shelve.open("@@{project_name}@@.db")
+except Exception as error:
+    print('Unable to open flat file: %s' % (error))
+    sys.exit(1)
+
+accessID = db["key"]
+accessKEY = db["secret"]
+
+try:
+    conn = boto.vpc.connect_to_region(db["region"], aws_access_key_id=accessID, aws_secret_access_key=accessKEY)
+except Exception as error:
+    print('Connection failed: %s' % (error))
+    sys.exit(1)
+
+try:
+	#Create subnet
+    sub = conn.create_subnet(db["vpc_id"], db["subnet"])
+    db["subnet_id"] = sub.id
+    db["subnet_az"] = sub.availability_zone
+
+    # Create a Route Table
+    route_table = conn.create_route_table(db["vpc_id"])
+
+    # Associate the route table with the subnet
+    conn.associate_route_table(route_table.id, sub.id)
+
+    # Add a route from the gateway to the attach_internet_gateway
+    route = conn.create_route(route_table.id, '0.0.0.0/0', db["gateway_id"])
+
+    db["route_table_id"] = route_table.id
+
+except Exception as error:
+    print('An error occured while creating and configuring the subnet: %s' % (error))
+    sys.exit(1)
+
+try:
+    db.sync()
+    db.close()
+except Exception as error:
+    print('Failed to close flat file: %s' % (error))
+    sys.exit(1)
+
+sys.exit(0)

@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+# Name: 		Delete IAM User
+# Type:         Execute
+# Script type:	Shell
+
+# Script:
+
+import boto, sys, shelve, os
+
+def treat(file):
+
+    accessID = db["key"]
+    accessKEY = db["secret"]
+
+    try:
+        conn = boto.connect_iam(accessID,accessKEY)
+    except Exception as error:
+        print('Connection failed: %s' % (error))
+        pass
+
+    try:
+        conn.delete_user_policy(db["username"], db["project"]+'_Permissions')
+        conn.delete_access_key(db["proj_access_key_id"],db["username"])
+        conn.delete_user(db["username"])
+    except Exception as error:
+        print('Error in user deletion: %s' % (error))
+        pass
+
+for file in os.listdir("."):
+    try:
+        if file.endswith(".db"):
+            db = shelve.open(file)
+            if len(db) == 0:
+                os.remove(file)
+            else:
+                treat(file)
+    except Exception as error:
+        print('Error while getting list of projects: %s' % (error))
+        pass
+
+sys.exit(0)

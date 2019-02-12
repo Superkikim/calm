@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+# Name:         Create IAM User and policy
+# Type:         Execute
+# Script Type:  Shell
+# Description:  Create an IAM user and attach a security policy as per
+#                 Calm requirements. Then parse access key and secret access key
+# New flat      username
+#   file keys:  proj_access_key_id
+#               proj_secret_access_key
+#               username
+
+# Script:
+
+import boto, sys, json, shelve
+
+try:
+    db = shelve.open("@@{project_name}@@.db")
+except Exception as error:
+    print('Unable to open flat file: %s' % (error))
+    sys.exit(1)
+
+accessID = db["key"]
+accessKEY = db["secret"]
+
+db["username"] = db["project"]+'_user'
+
+try:
+    conn = boto.connect_iam(accessID,accessKEY)
+except Exception as error:
+    print('Connection failed: %s' % (error))
+    sys.exit(1)
+
+try:
+    user_response = conn.create_user(db["username"])
+    # Create Policy for new user
+    key_response = conn.create_access_key(db["username"])
+    policy = {'Version': '2012-10-17'}
+    policy['Statement'] = [{'Effect': 'Allow',
+                        'Action': 'ec2:*',
+                        'Resource': '*'},
+                       {'Effect': 'Allow',
+                        'Action': 'iam:PassRole',
+                        'Action': 'iam:ListRoles',
+                        'Resource': '*'}]
+    policy_json = json.dumps(policy, indent=2)
+    conn.put_user_policy(db["username"], db["project"]+'_Permissions', policy_json)
+    conn.update_access_key(key_response.access_key_id, 'Inactive', db["username"])
+#     db[proj_username] = db[username]
+    db["proj_access_key_id"] = key_response.access_key_id
+    db["proj_secret_access_key"] = key_response.secret_access_key
+
+except Exception as error:
+    print('Error in user creation: %s' % (error))
+    sys.exit(1)
+
+# print('proj_username = %s' % username)
+# print('proj_access_key_id = %s' % key_response.access_key_id)
+# print('proj_secret_access_key = %s' % key_response.secret_access_key)
+
+try:
+    db.sync()
+    db.close()
+except Exception as error:
+    print('Failed to close flat file: %s' % (error))
+    sys.exit(1)
+
+sys.exit(0)
