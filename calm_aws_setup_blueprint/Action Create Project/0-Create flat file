@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Author:       Akim Sissaoui
+# Action:       Create Project
 # Name: 		Create flat file
 # Type:         Execute
 # Script type:  Shell
@@ -13,15 +15,6 @@
 
 import shelve, sys, re, os.path
 
-# Validate project name
-try:
-    reg=re.compile('^[a-zA-Z0-9\_]+$')
-    if not reg.match('@@{project_name}@@'):
-        raise Exception('The project name can only contain A-Z, a-z, 0-9 and underscore characters')
-except Exception as error:
-    print('Project name validation failed: %s' % (error))
-    sys.exit(1)
-
 # Check if project exist
 try:
     if os.path.exists("@@{project_name}@@.db"):
@@ -30,11 +23,12 @@ except Exception as error:
     print('Error while creating a new project: %s' % (error))
     sys.exit(1)
 
+# Create a flat file table for the project
 try:
     db = shelve.open("@@{project_name}@@.db")
     db["project"] = "@@{project_name}@@"
-    db["secret"] = "@@{aws_secret_access_key}@@"
-    db["key"] = "@@{aws_access_key_id}@@"
+    db["secret"] = "@@{aws_cred.password}@@"
+    db["key"] = "@@{aws_cred.username}@@"
     db["region"] = "@@{region}@@"
     db["cidr"] = "@@{cidr}@@"
     db["subnet"] = "@@{subnet}@@"
@@ -42,8 +36,8 @@ try:
     db["instance_type"] = "@@{instance_type}@@"
     db["tcp_ports"] = "@@{tcp_ports}@@"
     db["udp_ports"] = "@@{udp_ports}@@"
-    db["pc_user"] = "@@{pc_user}@@"
-    db["pc_password"] = "@@{pc_password}@@"
+    db["pc_user"] = "@@{pc_cred.username}@@"
+    db["pc_password"] = "@@{pc_cred.password}@@"
 except Exception as error:
     print('Error while creating flat file: %s' % (error))
     sys.exit(1)
