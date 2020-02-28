@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 
+# Author:      Akim Sissaoui
+# Action:      Package
+# Name:        PackageInstallTask
+# Type:        Execute
+# Script Type: Shell
+# Description: Install required packages
+
+# Script:
+
 set -ex
 
 sudo yum update -y
 sudo yum install nano htop -y
 
-sudo yum install epel-release python -y
-sudo yum install python-pip -y
-sudo yum install wget -y
+sudo yum install epel-release python3 -y
+sudo yum install python3 wget -y
 
-sudo pip install --upgrade pip
-sudo pip install boto netaddr
+sudo pip3 install --upgrade pip
+sudo pip3 install boto3
