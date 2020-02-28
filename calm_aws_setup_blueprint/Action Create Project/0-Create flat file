@@ -6,6 +6,8 @@
 # Description:  Create a flat file named after the project name Variable
 #               and save variables inside
 # Script Type:  Shell
+# Variable:     project_name
+#   regex:      ^[a-zA-Z0-9\_]+$
 
 # Script:
 
