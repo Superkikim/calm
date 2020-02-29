@@ -1,8 +1,8 @@
 # Variables for the Create Sandbox action
 
   |Name        |Runtime  |Data Type   |Input Type  |Default Value|Label       |Description |Secret    |Private  |Mandatory |Regex     |
-  |------------|:-------:|------------|------------|-------------|------------|------------|:--------:|:-------:|:--------:|          |
-  |project_name|Yes |String   |Simple      |project_name|Project Name|Define a unique project name. This project name will be used as a prefix for all necessary objects within AWS and Prism Central|No|No|Yes|^[a-zA-Z0-9\_]+$|
+  | --- | :---: | --- | --- | --- | --- | --- | :---: | :---: | :---: | --- |
+  | project_name | Yes | String   | Simple      | project_name |Project Name| Define a unique project name. This project name will be used as a prefix for all necessary objects within AWS and Prism Central|No|No|Yes| `^[a-zA-Z0-9\_]+$` |
   |aws_access_key_id|Yes|String|Simple|aws_access_key_id|AWS Access Key ID|Enter your AWS Access Key ID. The user need the following permissions: AmazonEC2FullAccess, AmazonVPCFullAccess, IAMFullAccess|No|No|Yes||
   |aws_secret_access_key|Yes|String|Simple|aws_secret_access_key|AWS Secret Access Key|Enter the AWS Secret Access Key corresponding to the previously entered AWS Access Key ID|Yes|No|Yes||
   |region     |Yes|String|Predefined|eu-west-2us-west-1,ap-southeast-1|AWS Region|Select the region where you would like to create an image. Default is West Europe 2|No|No|Yes||
