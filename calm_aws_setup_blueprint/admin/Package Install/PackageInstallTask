@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Author:      Akim Sissaoui
+# Service:     admin
 # Action:      Package
 # Name:        PackageInstallTask
 # Type:        Execute
@@ -18,4 +19,4 @@ sudo yum install epel-release python3 -y
 sudo yum install python3 wget -y
 
 sudo pip3 install --upgrade pip
-sudo pip3 install boto3
+sudo pip3 install boto3 netaddr
