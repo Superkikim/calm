@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Author:      Akim Sissaoui
+# Service:     admin
+# Action:      Create
+# Task:        2_Setup_SSH
 # Type:        Execute
 # Script Type: Shell
 

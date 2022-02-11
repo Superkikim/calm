@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Author:      Akim Sissaoui
+# Service:     admin
+# Action:      Create
+# Task: 			 4_Firewall_lockdown
 # Type:        Execute
 # Script Type: Shell
 
@@ -56,5 +60,5 @@ sudo iptables -A INPUT -p tcp -s 0/0 --sport 443 -d @@{address}@@ --dport 1024:6
 sudo iptables -L
 EOL
 
-chmod +x /home/@@{ssh_user}@@/scripts/iptablescfg.sh
-/home/@@{ssh_user}@@/scripts/iptablescfg.sh &
+chmod +x /home/@@{admin_cred.username}@@/scripts/iptablescfg.sh
+/home/@@{admin_cred.username}@@/scripts/iptablescfg.sh &

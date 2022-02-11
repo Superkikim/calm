@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Author:      Akim Sissaoui
+# Service:     admin
+# Action:      Create
+# Task:        0_Change_hostname
+# Type:        Execute
+# Script Type: Shell
+
+# Script:
+
+set -ex
+
+sudo hostnamectl set-hostname @@{name}@@

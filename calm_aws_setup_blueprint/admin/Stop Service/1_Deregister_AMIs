@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
-# Name:         Deregister AMIs
-# Type:         Execute
-# Script Type:  Shell
+# Author:      Akim Sissaoui
+# Service:     admin
+# Action:      Stop Service
+# Task:        1_Deregister_AMIs
+# Type:        Execute
+# Script Type: Shell
 
 # Script:
 

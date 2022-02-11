@@ -2,8 +2,8 @@
 
 # Author:      Akim Sissaoui
 # Service:     admin
-# Action:      Package
-# Name:        PackageInstallTask
+# Action:      Package Install
+# Task:        Install
 # Type:        Execute
 # Script Type: Shell
 # Description: Install required packages

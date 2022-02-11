@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-# Name: 		Delete IAM Role
+# Author:       Akim Sissaoui
+# Service:      admin
+# Action:       Stop Service
+# Task: 		4_Delete_IAM_Roles
 # Type:         Execute
 # Script type:	Shell
 

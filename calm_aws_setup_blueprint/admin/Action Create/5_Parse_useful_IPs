@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Author:      Akim Sissaoui
+# Service:     admin
+# Action:      Create
+# Task:        5_Parse_useful_IPs
 # Type:        Set Variable
 # Script Type: Shell
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Author:      Akim Sissaoui
+# Service:     admin
+# Action:      Create
+# Task:        3_Configure_sudo
 # Type:        Execute
 # Script Type: Shell
 

@@ -1,6 +1,9 @@
 #!/bin/env python
 
-# Name:         Delete AWS Calm Entry
+# Author:       Akim Sissaoui
+# Service:      admin
+# Action:       Stop Service
+# Task:         6_Delete_AWS_Calm_Entries
 # Type:         Execute
 # Script Type:  Shell
 # Description:  Delete the related AWS entry in Calm Settings

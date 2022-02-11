@@ -14,7 +14,7 @@ The goal of this BluePrint is to automate [KB5202](https://portal.nutanix.com/#/
 Once launched, a CentOS virtual machine will be deployed as administration interface to run script and create the environments on AWS and accounts in Calm. It will then allow to create multiple AWS environments following KB5202.
 
 ### Features
-* Administration Linux VM with Python and boto2 to interface with AWS
+* Administration Linux VM with Python3 and boto3 to interface with AWS
 
 Then, for each project:
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# Author:       Akim Sissaoui
+# Service:      admin
+# Action:       Stop Service
+# Task          2_Delete_Keypairs
 # Type:         Execute
 # Script Type:  Shell
 # Description:  Delete related keypair

@@ -2,7 +2,10 @@
 
 # Create VPC
 
-# Name:         Delete VPC and dependencies
+# Author:       Akim Sissaoui
+# Service:      admin
+# Action:       Stop Service
+# Task:         3_Delete_VPC_and_dependencies
 # Type:         Execute
 # Script Type:  Shell
 # Description:	Detach the Internet Gateway, delete the subnet, route table, security group, vpc and internet gateway
